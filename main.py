@@ -1,44 +1,56 @@
 from random import randint
 
-from termcolor import cprint
-
 
 class Man:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
         self.house = None
         self.fullness = 50
+        self.no_money = 0
 
     def __str__(self):
-        return f'My fullness - {self.fullness}'
+        return f"Man's fullness = {self.fullness}"
 
     def work(self):
-        cprint('I go to work', color="blue")
-        self.house.money += 50
+        print('I go to work')
+        self.house.money += 100
         self.fullness -= 10
 
     def sleep(self):
-        cprint('I sleep', color='blue')
+        print('I sleep')
         self.fullness -= 20
 
     def shopping(self):
         if self.house.money > 50:
-            cprint('I go shopping', color='blue')
+            print('I go shopping')
             self.house.money -= 50
             self.house.food += 50
         else:
-            cprint('Not enough money!', color='red')
+            print('Not enough money!')
+            self.no_money += 1
 
     def eat(self):
         if self.house.food > 10:
-            cprint('I eat', color='blue')
+            print('I eat')
             self.house.food -= 10
             self.fullness += 10
         else:
-            cprint("Not enough food!", color='red')
+            print("Not enough food!")
 
     def go_to_the_house(self, house):
         self.house = house
+
+    def to_buy_cat_food(self):
+        if self.house.money > 50:
+            print("I buy cat food")
+            self.house.cat_food += 50
+            self.house.money -= 50
+        else:
+            print('Not enough money!')
+
+    def clean_house(self):
+        print("I clean house")
+        self.house.dust -= 20
+        self.fullness -= 20
 
     def act(self):
         if self.fullness <= 40:
@@ -47,59 +59,120 @@ class Man:
             self.shopping()
         elif self.house.money <= 50:
             self.work()
+        elif self.house.cat_food < 30:
+            self.to_buy_cat_food()
+        elif self.house.dust > 15 and self.house.dust >= 0:
+            self.clean_house()
         else:
-            solution = randint(1, 6)
+            solution = randint(1, 7)
             if solution == 1:
                 self.eat()
             elif solution == 2:
                 self.work()
             elif solution == 3:
                 self.shopping()
+            elif solution == 4:
+                self.clean_house()
+            elif solution == 5:
+                self.to_buy_cat_food()
             else:
                 self.sleep()
+
+
+class Cat:
+    def __init__(self):
+        self.house = None
+        self.fullness = 50
+
+    def __str__(self):
+        return f"Cat's fullness = {self.fullness}"
+
+    def sleep(self):
+        print("I sleep")
+        self.fullness -= 10
+
+    def eat(self):
+        if self.house.cat_food > 10:
+            print("I eat")
+            self.fullness += 20
+            self.house.cat_food -= 10
+        else:
+            print("Not enough food!")
+
+    def play(self):
+        print("I play")
+        self.fullness -= 10
+        self.house.dust += 3
+
+    def go_home(self, house):
+        self.house = house
+
+    def act(self):
+        if self.fullness < 20:
+            self.eat()
+        else:
+            cat_solution = randint(1, 5)
+            if cat_solution == 1:
+                self.sleep()
+            elif cat_solution == 2:
+                self.eat()
+            else:
+                self.play()
 
 
 class House:
     def __init__(self, money, food):
         self.money = money
         self.food = food
+        self.cat_food = 0
+        self.dust = 0
+
     def __str__(self):
-        return f'Money = {self.money}, Food = {self.food}'
+        return f'Money = {self.money}, Food = {self.food}\nCat food = ' \
+               f'{self.cat_food}, Dust = {self.dust}'
 
 
 house_1 = House(70, 70)
-man_1 = Man("Jack")
-man_1.house = house_1
+man_1 = Man()
+man_1.go_to_the_house(house_1)
+cat_1 = Cat()
+cat_1.go_home(house_1)
+cat_2 = Cat()
+cat_2.go_home(house_1)
 counter = 1
-while counter <= 365:
-    cprint(f'===========DAY {counter}==========', color='yellow')
+while counter <= 10000:
+    print(f'===========DAY {counter}==========')
     if man_1.fullness < 0:
-        cprint('DEAD...', color='red')
+        print('DEAD...')
         break
+    elif cat_1.fullness < 0:
+        print('DEAD...')
+        break
+    elif cat_1.fullness < 0:
+        print('DEAD...')
+        break
+
     else:
+        print('Man: ')
         man_1.act()
         counter += 1
         print(man_1)
+        print('\nCat 1:')
+        cat_1.act()
+        print(cat_1)
+        print('\nCat 2:')
+        cat_2.act()
+        print(cat_2)
+        print("\nHouse:")
         print(house_1)
-
-# print(man_1)
-# Необходимо создать класс кота. У кота есть аттрибуты - сытость и дом (в котором он живет).
-# Кот живет с человеком в доме.
-# Для кота дом характеризируется - миской для еды и грязью.
-# Изначально в доме нет еды для кота и нет грязи.
-
-# Доработать класс человека, добавив методы
-#   подобрать кота - у кота появляется дом.
-#   купить коту еды - кошачья еда в доме увеличивается на 50, деньги уменьшаются на 50.
-#   убраться в доме - степень грязи в доме уменьшается на 100, сытость у человека уменьшается на 20.
-# Увеличить кол-во зарабатываемых человеком денег до 150 (он выучил пайтон и устроился на хорошую работу :)
-
-# Кот может есть, спать и драть обои - необходимо реализовать соответствующие методы.
-# Когда кот спит - сытость уменьшается на 10
-# Когда кот ест - сытость увеличивается на 20, кошачья еда в доме уменьшается на 10.
-# Когда кот дерет обои - сытость уменьшается на 10, степень грязи в доме увеличивается на 5
-# Если степень сытости < 0, кот умирает.
-# Так же надо реализовать метод "действуй" для кота, в котором он принимает решение
-# что будет делать сегодня
-
-# Человеку и коту надо вместе прожить 365 дней.
+        if man_1.no_money == 1:
+            print('No money...')
+            break
+        elif house_1.dust >= 100:
+            print('The house is too dirty!')
+            break
+        elif house_1.cat_food < 0:
+            print('There is no food for cat!')
+            break
+        else:
+            pass
